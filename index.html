@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0053)file:///C:/Users/cpulgarin/Downloads/proyectos_7.html -->
+<!-- saved from url=(0053)file:///C:/Users/cpulgarin/Downloads/proyectos_8.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -413,7 +413,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 </style>
 </head>
 <body>
-<div class="version-badge">v3.0</div>
+<div class="version-badge">v3.1</div>
 <div class="obs-panel">
   <div class="obs-title">📝 Observación General</div>
   <textarea class="obs-textarea" id="obs-texto" placeholder="Escribe tus observaciones sobre el proyecto..."></textarea>
@@ -7185,10 +7185,13 @@ window.guardarObservacionProyecto = async function() {
     statusDiv.className = 'modal-status show';
     
     try {
+        // Obtener el nombre del proyecto desde freqData
+        const nombreProyectoCompleto = window.proyectoActual;
+        
         await addDoc(collection(db, 'mensajes'), {
             contenido: obsText,
             tipo: 'observacion-proyecto-frecuencia',
-            proyecto: window.proyectoActual,
+            proyecto: nombreProyectoCompleto,
             timestamp: serverTimestamp()
         });
         
