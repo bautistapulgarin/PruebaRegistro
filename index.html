@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0054)file:///C:/Users/cpulgarin/Downloads/proyectos_12.html -->
+<!-- saved from url=(0054)file:///C:/Users/cpulgarin/Downloads/proyectos_13.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -89,7 +89,8 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 .date-btn{flex:1;padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:12px;font-weight:500;color:var(--text);transition:all .2s;}
 .date-btn:hover{border-color:var(--green);background:rgba(13,127,95,0.05);}
 .date-btn.selected{background:var(--green-bg);border-color:var(--green);color:var(--green);}
-.date-input{width:0;height:0;opacity:0;position:absolute;pointer-events:none;}
+.date-input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);margin-bottom:8px;cursor:pointer;}
+.date-input:focus{outline:none;border-color:var(--green);box-shadow:0 0 0 3px rgba(13,127,95,0.1);}
 
 /* SLIDERS */
 .slider-container{margin-bottom:12px;}
@@ -437,7 +438,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
 </style>
 </head>
 <body>
-<div class="version-badge">v3.1</div>
+<div class="version-badge">v3.2</div>
 <div class="obs-panel">
   <div class="obs-title">📝 Observación General</div>
   <textarea class="obs-textarea" id="obs-texto" placeholder="Escribe tus observaciones sobre el proyecto..."></textarea>
@@ -452,7 +453,7 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
   <div class="modal-box">
     <div class="modal-header">
       <div class="modal-title">📝 Observación &amp; Priorización</div>
-      <div class="modal-proyecto" id="modal-proyecto-name"></div>
+      <div class="modal-proyecto" id="modal-proyecto-name">Matriz de contratistas — tipo de contrato por actividad económica</div>
     </div>
     
     <textarea class="modal-textarea" id="modal-textarea" placeholder="Escribe tu observación..."></textarea>
@@ -460,12 +461,8 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
     <!-- SECCIÓN FECHAS -->
     <div class="modal-section">
       <div class="modal-section-title">📅 Fechas del Proyecto</div>
-      <div class="date-button-group">
-        <button class="date-btn" id="btn-inicio" onclick="abrirCalendarioInicio()">📆 Inicio</button>
-        <button class="date-btn" id="btn-cierre" onclick="abrirCalendarioCierre()">📆 Cierre</button>
-      </div>
-      <input type="date" id="fecha-inicio" class="date-input">
-      <input type="date" id="fecha-cierre" class="date-input">
+      <input type="date" id="fecha-inicio" class="date-input" onchange="actualizarFechaInicio()">
+      <input type="date" id="fecha-cierre" class="date-input" onchange="actualizarFechaCierre()">
     </div>
 
     <!-- SECCIÓN URGENCIA E IMPORTANCIA -->
@@ -561,12 +558,12 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
             <span class="freq-group-count">4 temas priorizados</span>
           </div>
         </td>
-      </tr><tr class="freq-row freq-clickable" onclick="toggleFreqDet(2)" id="frow-2">
+      </tr><tr class="freq-row freq-clickable freq-row-active" onclick="toggleFreqDet(2)" id="frow-2">
       <td class="freq-rank">2</td>
       <td>
         <div class="freq-name">Pedidos en Excel antes de SINCO — doble digitación sin valor</div>
         <div class="freq-sub">Aprobación en Excel y re-digitación en SINCO · SSTA sin acceso · proyección manual</div>
-        <span class="freq-expand-hint" id="fhint-2">▼ ver detalle por sesión</span>
+        <span class="freq-expand-hint" id="fhint-2">▲ cerrar</span>
       </td>
       <td><div class="freq-dots">
         <div class="dot dot-rl"></div>
@@ -580,9 +577,9 @@ body::before{content:'';position:fixed;inset:0;background-image:url("data:image/
         <span class="badge-cons">Consulta Peregrino</span>
         <button class="freq-obs-btn" onclick="abrirModalObservacion(&#39;Pedidos en Excel antes de SINCO — doble digitación sin valor&#39;, event)">💬 Obs.</button>
       </td>
-    </tr><tr id="fdetrow-2" class="freq-det-row">
+    </tr><tr id="fdetrow-2" class="freq-det-row freq-det-open">
         <td colspan="5" style="padding:0">
-          <div class="freq-det-box" id="fdetbox-2">
+          <div class="freq-det-box open" id="fdetbox-2">
             <div class="fdet-tabs-bar">
               
                 <button class="fdet-tab-btn active" style="border-bottom-color:#a06000;color:#a06000" onclick="switchFdet(2,&#39;cons&#39;,this,&#39;#a06000&#39;)" id="fdtab-2-cons">
@@ -7220,39 +7217,28 @@ window.abrirModalObservacion = function(nombreProyecto, event) {
     document.getElementById('importancia-slider').value = 3;
     document.getElementById('urgencia-value').textContent = '3';
     document.getElementById('importancia-value').textContent = '3';
-    document.getElementById('btn-inicio').textContent = '📆 Inicio';
-    document.getElementById('btn-cierre').textContent = '📆 Cierre';
-    document.getElementById('btn-inicio').classList.remove('selected');
-    document.getElementById('btn-cierre').classList.remove('selected');
     document.getElementById('modal-status').classList.remove('show', 'success', 'error');
     window.proyectoActual = nombreProyecto;
     document.getElementById('modal-overlay').classList.add('active');
 };
 
 window.abrirCalendarioInicio = function() {
-    const inputFecha = document.getElementById('fecha-inicio');
-    inputFecha.click();
+    document.getElementById('fecha-inicio').click();
 };
 
 window.abrirCalendarioCierre = function() {
-    const inputFecha = document.getElementById('fecha-cierre');
-    inputFecha.click();
+    document.getElementById('fecha-cierre').click();
 };
 
-// Event listeners para actualizar botones cuando cambia la fecha
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('fecha-inicio').addEventListener('change', function() {
-        const fecha = this.value ? new Date(this.value).toLocaleDateString('es-CO') : '';
-        document.getElementById('btn-inicio').textContent = fecha ? `📅 ${fecha}` : '📆 Inicio';
-        document.getElementById('btn-inicio').classList.toggle('selected', !!this.value);
-    });
-    
-    document.getElementById('fecha-cierre').addEventListener('change', function() {
-        const fecha = this.value ? new Date(this.value).toLocaleDateString('es-CO') : '';
-        document.getElementById('btn-cierre').textContent = fecha ? `📅 ${fecha}` : '📆 Cierre';
-        document.getElementById('btn-cierre').classList.toggle('selected', !!this.value);
-    });
-});
+window.actualizarFechaInicio = function() {
+    const fecha = document.getElementById('fecha-inicio').value;
+    console.log('Fecha inicio seleccionada:', fecha);
+};
+
+window.actualizarFechaCierre = function() {
+    const fecha = document.getElementById('fecha-cierre').value;
+    console.log('Fecha cierre seleccionada:', fecha);
+};
 
 window.actualizarUrgencia = function(valor) {
     document.getElementById('urgencia-value').textContent = valor;
