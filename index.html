@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0053)file:///C:/Users/cpulgarin/Downloads/proyectos_4.html -->
+<!-- saved from url=(0053)file:///C:/Users/cpulgarin/Downloads/proyectos_5.html -->
 <html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7032,15 +7032,13 @@ window.guardarEnFirebase = async function() {
     statusDiv.className = 'obs-status show';
     
     try {
-        // Datos simplificados para carga rápida
-        const datosProyecto = {
-            proyecto: 'Consolidado Tour IA — Ingeurbe',
-            observacion: obsText,
-            timestamp: serverTimestamp(),
-            fecha: new Date().toLocaleString('es-CO')
-        };
-        
-        await addDoc(collection(db, 'proyectos'), datosProyecto);
+        // Guardar en la colección 'mensajes' como antes (que ya tiene permisos)
+        await addDoc(collection(db, 'mensajes'), {
+            contenido: obsText,
+            tipo: 'observacion-proyecto',
+            proyecto: 'Consolidado Tour IA',
+            timestamp: serverTimestamp()
+        });
         
         statusDiv.textContent = '✅ Guardado exitosamente';
         statusDiv.className = 'obs-status show success';
